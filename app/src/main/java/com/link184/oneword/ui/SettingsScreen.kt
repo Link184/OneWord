@@ -4,6 +4,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -12,7 +13,7 @@ import com.link184.oneword.notification.WordNotificationWorker
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(modifier: Modifier = Modifier) {
     val workerRequest: WorkRequest = remember {
         PeriodicWorkRequestBuilder<WordNotificationWorker>(1, TimeUnit.DAYS)
             .build()
@@ -24,9 +25,12 @@ fun SettingsScreen() {
             .getInstance(context)
     }
 
-    Button(onClick = {
-        workManager.enqueue(workerRequest)
-    }) {
+    Button(
+        modifier = modifier,
+        onClick = {
+            workManager.enqueue(workerRequest)
+        }
+    ) {
         Text("Launch notifications")
     }
 }

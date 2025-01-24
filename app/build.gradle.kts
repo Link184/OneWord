@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.workmanager.ktx)
+    implementation(libs.accompanist.permissions)
     implementation(libs.kotlin.serialization.json)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
