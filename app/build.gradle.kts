@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    id("kotlin-kapt")
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -59,6 +61,10 @@ dependencies {
     implementation(libs.androidx.workmanager.ktx)
     implementation(libs.accompanist.permissions)
     implementation(libs.kotlin.serialization.json)
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.work.android)
+    kapt(libs.hilt.compiler)
+    kapt(libs.hilt.work.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.mockk)
