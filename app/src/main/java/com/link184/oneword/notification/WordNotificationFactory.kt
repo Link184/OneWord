@@ -1,5 +1,6 @@
 package com.link184.oneword.notification
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,26 +9,53 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.link184.oneword.R
 import com.link184.oneword.data.WordsRepository
 
 private const val CHANNEL_ID = "OneWordMainNotification"
+private const val NOTIFICATION_ID = 666
 
 class WordNotificationFactory(
+    private val context: Context,
     wordsRepository: WordsRepository
 ) {
     private val word = wordsRepository.loadWords().random()
+    private val notificationManager = NotificationManagerCompat.from(context)
 
-    fun buildNotification(context: Context): Notification {
+    @SuppressLint("MissingPermission")
+    fun show() {
+        notificationManager.notify(NOTIFICATION_ID, buildNotification(context))
+    }
+
+    fun cancel() {
+        notificationManager.cancel(NOTIFICATION_ID)
+    }
+
+    private fun buildNotification(context: Context): Notification {
         createNotificationChannel(context)
-
-        val dismissIntent = Intent(context, NotificationDismissReceiver::class.java)
-            .setAction(NotificationDismissReceiver.INTENT_ACTION)
 
         val dismissPendingIntent = PendingIntent.getBroadcast(
             context,
             0,
-            dismissIntent,
+            Intent(context, NotificationDismissReceiver::class.java)
+                .setAction(NotificationDismissReceiver.DISMISSED_INTENT_ACTION),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val cancelPendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            Intent(context, NotificationDismissReceiver::class.java)
+                .setAction(NotificationDismissReceiver.CANCELED_INTENT_ACTION),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val nextWordPendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            Intent(context, NotificationDismissReceiver::class.java)
+                .setAction(NotificationDismissReceiver.NEXT_WORD_INTENT_ACTION),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
@@ -38,8 +66,8 @@ class WordNotificationFactory(
             .setSilent(true)
             .setOngoing(true)
             .setDeleteIntent(dismissPendingIntent)
-//            .addAction(android.R.drawable.ic_delete, "Cancel", WorkManager.getInstance(context)
-//                .createCancelPendingIntent(getId()))
+            .addAction(android.R.drawable.ic_delete, "Don't show today", cancelPendingIntent)
+            .addAction(android.R.drawable.ic_media_next, "Next word", nextWordPendingIntent)
             .build()
     }
 

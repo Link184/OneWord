@@ -24,7 +24,10 @@ object SingletonComponent {
 
     @Provides
     @Singleton
-    fun providesWordNotificationFactory(wordsRepository: WordsRepository): WordNotificationFactory {
-        return WordNotificationFactory(wordsRepository)
+    fun providesWordNotificationFactory(
+        @ApplicationContext context: Context,
+        wordsRepository: WordsRepository
+    ): WordNotificationFactory {
+        return WordNotificationFactory(context, wordsRepository)
     }
 }

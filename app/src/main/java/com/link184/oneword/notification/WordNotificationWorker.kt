@@ -2,7 +2,6 @@ package com.link184.oneword.notification
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
@@ -22,9 +21,8 @@ class WordNotificationWorker @AssistedInject constructor(
 ) : Worker(context, workerParameters) {
     @SuppressLint("MissingPermission")
     override fun doWork(): Result {
-        val notification = wordNotificationFactory.buildNotification(applicationContext)
+        wordNotificationFactory.show()
 
-        NotificationManagerCompat.from(applicationContext).notify(666, notification)
         return Result.success()
     }
 

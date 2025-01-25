@@ -30,6 +30,8 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="com.link184.oneword.WORD_NOTIFICATION_DISMISSED" />
+                <action android:name="com.link184.oneword.WORD_NOTIFICATION_CANCELED" />
+                <action android:name="com.link184.oneword.WORD_NOTIFICATION_NEXT" />
             </intent-filter>
         </receiver>
 
