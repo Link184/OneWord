@@ -3,27 +3,43 @@ package com.link184.oneword.notification
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.link184.oneword.R
 import com.link184.oneword.data.WordsRepository
 
-private val CHANNEL_ID = "OneWordMainNotification"
+private const val CHANNEL_ID = "OneWordMainNotification"
 
 class WordNotificationFactory(
-    private val wordsRepository: WordsRepository
+    wordsRepository: WordsRepository
 ) {
     private val word = wordsRepository.loadWords().random()
 
     fun buildNotification(context: Context): Notification {
         createNotificationChannel(context)
+
+        val dismissIntent = Intent(context, NotificationDismissReceiver::class.java)
+            .setAction(NotificationDismissReceiver.INTENT_ACTION)
+
+        val dismissPendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            dismissIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle("The word of the day")
-            .setContentText("${word.original} : ${word.translation}")
+            .setContentTitle("${word.original} : ${word.translation}")
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setSilent(true)
+            .setOngoing(true)
+            .setDeleteIntent(dismissPendingIntent)
+//            .addAction(android.R.drawable.ic_delete, "Cancel", WorkManager.getInstance(context)
+//                .createCancelPendingIntent(getId()))
             .build()
     }
 
