@@ -35,49 +35,44 @@ class WordNotificationFactory(
     private fun buildNotification(context: Context): Notification {
         createNotificationChannel(context)
 
-        val dismissPendingIntent = PendingIntent.getBroadcast(
-            context,
-            0,
-            Intent(context, NotificationDismissReceiver::class.java)
-                .setAction(NotificationDismissReceiver.DISMISSED_INTENT_ACTION),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val cancelPendingIntent = PendingIntent.getBroadcast(
-            context,
-            0,
-            Intent(context, NotificationDismissReceiver::class.java)
-                .setAction(NotificationDismissReceiver.CANCELED_INTENT_ACTION),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val nextWordPendingIntent = PendingIntent.getBroadcast(
-            context,
-            0,
-            Intent(context, NotificationDismissReceiver::class.java)
-                .setAction(NotificationDismissReceiver.NEXT_WORD_INTENT_ACTION),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle("${word.original} : ${word.translation}")
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setSilent(true)
             .setOngoing(true)
-            .setDeleteIntent(dismissPendingIntent)
-            .addAction(android.R.drawable.ic_delete, "Don't show today", cancelPendingIntent)
-            .addAction(android.R.drawable.ic_media_next, "Next word", nextWordPendingIntent)
+            .setDeleteIntent(buildNotificationActionPendingIntent(WordNotificationActionReceiver.DISMISS_INTENT_ACTION))
+            .addAction(
+                android.R.drawable.ic_delete,
+                "Don't show today",
+                buildNotificationActionPendingIntent(WordNotificationActionReceiver.CANCELED_INTENT_ACTION)
+            )
+            .addAction(
+                android.R.drawable.ic_media_next,
+                "Next word",
+                buildNotificationActionPendingIntent(WordNotificationActionReceiver.NEXT_WORD_INTENT_ACTION)
+            )
             .build()
+    }
+
+    private fun buildNotificationActionPendingIntent(action: String): PendingIntent {
+        return PendingIntent.getBroadcast(
+            context,
+            0,
+            Intent(context, WordNotificationActionReceiver::class.java)
+                .setAction(action),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     private fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "One Word main notification channel"
             val descriptionText = "All the One Word notification are flowing through this channel"
-            val channel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW).apply {
-                description = descriptionText
-            }
+            val channel =
+                NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW).apply {
+                    description = descriptionText
+                }
 
             val notificationManager: NotificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

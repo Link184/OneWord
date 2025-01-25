@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".notification.NotificationDismissReceiver"
+        <receiver android:name=".notification.WordNotificationActionReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.link184.oneword.WORD_NOTIFICATION_DISMISSED" />
