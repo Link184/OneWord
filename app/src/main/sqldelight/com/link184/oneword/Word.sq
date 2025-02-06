@@ -1,0 +1,20 @@
+CREATE TABLE Word (
+  word_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  word_original TEXT NOT NULL,
+  word_translated TEXT NOT NULL
+);
+
+insert:
+INSERT INTO Word (word_original, word_translated)
+VALUES (?, ?);
+
+selectAll:
+SELECT *
+FROM Word;
+
+insertFullWordObject:
+INSERT INTO Word(word_original, word_translated)
+VALUES ?;
+
+deleteAll:
+DELETE FROM Word;

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     id("kotlin-kapt")
     alias(libs.plugins.hilt)
+    alias(libs.plugins.sqldelight)
 }
 
 android {
@@ -49,6 +50,14 @@ android {
     }
 }
 
+sqldelight {
+    databases {
+        create("OneWordDatabase") {
+            packageName.set("com.link184.oneword")
+        }
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -63,11 +72,13 @@ dependencies {
     implementation(libs.kotlin.serialization.json)
     implementation(libs.hilt.android)
     implementation(libs.hilt.work.android)
+    implementation(libs.sqldelight.driver.android)
     kapt(libs.hilt.compiler)
     kapt(libs.hilt.work.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.mockk)
+    testImplementation(libs.sqldelight.driver.jvm)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

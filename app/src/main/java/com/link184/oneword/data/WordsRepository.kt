@@ -9,15 +9,32 @@ import java.io.BufferedReader
 
 interface WordsRepository {
     fun loadWords(): List<Word>
+
+    fun nextWord(): Word
 }
 
-class DefaultWordsRepository(private val resources: Resources): WordsRepository {
+class DefaultWordsRepository(
+    private val resources: Resources,
+    private val wordsDataSource: WordsDataSource
+): WordsRepository {
     override fun loadWords(): List<Word> {
+        maybeCacheWords()
+
+        return wordsDataSource.getAllWords()
+    }
+
+    private fun maybeCacheWords() {
         val rawDeEsDictionary = resources.openRawResource(R.raw.de_en).bufferedReader().use(BufferedReader::readText)
         val jsonObject = Json.decodeFromString<JsonObject>(rawDeEsDictionary)
 
-        return jsonObject.map {
+        val allWords = jsonObject.map {
             Word(it.value.jsonPrimitive.toString(), it.key)
         }
+
+        wordsDataSource.setAllWords(allWords)
+    }
+
+    override fun nextWord(): Word {
+        TODO("Not yet implemented")
     }
 }
