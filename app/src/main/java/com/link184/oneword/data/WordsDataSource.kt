@@ -15,7 +15,9 @@ interface WordsDataSource {
 
     fun getAllWords(): List<Word>
 
-    fun getFirstItem(): Word
+    fun getFirstWord(): Word
+
+    fun getWordById(id: Long): Word
 
     fun bundledWords(): List<Word>
 }
@@ -38,8 +40,12 @@ class DefaultWordsDataSource(
         return wordQueries.selectAll(::Word).executeAsList()
     }
 
-    override fun getFirstItem(): Word {
+    override fun getFirstWord(): Word {
         return wordQueries.selectFirstWord(::Word).executeAsOne()
+    }
+
+    override fun getWordById(id: Long): Word {
+        return wordQueries.selectById(id, ::Word).executeAsOne()
     }
 
     override fun bundledWords(): List<Word> {

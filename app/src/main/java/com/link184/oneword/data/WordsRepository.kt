@@ -4,6 +4,8 @@ interface WordsRepository {
     fun loadWords(): List<Word>
 
     fun nextWord(): Word
+
+    fun activeWord(): Word
 }
 
 class DefaultWordsRepository(
@@ -21,10 +23,25 @@ class DefaultWordsRepository(
     private fun cacheWords() {
         val bundledWordsShuffled = wordsDataSource.bundledWords().shuffled()
         wordsDataSource.setAllWords(bundledWordsShuffled)
-        activeWordPreference.activeWordId = wordsDataSource.getFirstItem().id
+        activeWordPreference.activeWordId = wordsDataSource.getFirstWord().id
     }
 
     override fun nextWord(): Word {
-        TODO("Not yet implemented")
+        return if (activeWordPreference.activeWordId == NOT_SET_WORD_ID) {
+            cacheWords()
+            wordsDataSource.getFirstWord()
+        } else {
+            activeWordPreference.activeWordId++
+            wordsDataSource.getWordById(activeWordPreference.activeWordId)
+        }
+    }
+
+    override fun activeWord(): Word {
+        return if (activeWordPreference.activeWordId == NOT_SET_WORD_ID) {
+            cacheWords()
+            wordsDataSource.getFirstWord()
+        } else {
+            wordsDataSource.getWordById(activeWordPreference.activeWordId)
+        }
     }
 }
