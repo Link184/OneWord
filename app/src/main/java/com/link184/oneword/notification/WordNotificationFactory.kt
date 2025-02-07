@@ -11,16 +11,15 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.link184.oneword.R
-import com.link184.oneword.data.WordsRepository
+import com.link184.oneword.domain.GetActiveWordUseCase
 
 private const val CHANNEL_ID = "OneWordMainNotification"
 private const val NOTIFICATION_ID = 666
 
 class WordNotificationFactory(
     private val context: Context,
-    wordsRepository: WordsRepository
+    private val getActiveWordUseCase: GetActiveWordUseCase
 ) {
-    private val word = wordsRepository.loadWords().random()
     private val notificationManager = NotificationManagerCompat.from(context)
 
     @SuppressLint("MissingPermission")
@@ -35,6 +34,7 @@ class WordNotificationFactory(
     private fun buildNotification(context: Context): Notification {
         createNotificationChannel(context)
 
+        val word = getActiveWordUseCase()
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle("${word.original} : ${word.translation}")

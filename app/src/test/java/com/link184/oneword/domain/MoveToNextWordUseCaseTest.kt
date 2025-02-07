@@ -8,15 +8,15 @@ import org.junit.Before
 import org.junit.Test
 
 
-class GetNextWordUseCaseTest {
-    private lateinit var classUnderTest: GetNextWordUseCase
+class MoveToNextWordUseCaseTest {
+    private lateinit var classUnderTest: MoveToNextWordUseCase
     @MockK(relaxed = true)
     private lateinit var wordsRepository: WordsRepository
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        classUnderTest = GetNextWordUseCase(wordsRepository)
+        classUnderTest = MoveToNextWordUseCase(wordsRepository)
     }
 
     @Test

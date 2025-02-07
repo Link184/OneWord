@@ -3,6 +3,7 @@ package com.link184.oneword.notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.link184.oneword.domain.MoveToNextWordUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -10,10 +11,16 @@ import javax.inject.Inject
 class WordNotificationActionReceiver : BroadcastReceiver() {
     @Inject
     internal lateinit var wordNotificationFactory: WordNotificationFactory
+    @Inject
+    internal lateinit var moveToNextWordUseCase: MoveToNextWordUseCase
 
     override fun onReceive(context: Context, intent: Intent?) {
         when (intent?.action) {
-            DISMISS_INTENT_ACTION, NEXT_WORD_INTENT_ACTION -> WordNotificationWorker.enqueue(context)
+            DISMISS_INTENT_ACTION -> WordNotificationWorker.enqueue(context)
+            NEXT_WORD_INTENT_ACTION -> {
+                moveToNextWordUseCase()
+                WordNotificationWorker.enqueue(context)
+            }
             CANCELED_INTENT_ACTION -> wordNotificationFactory.cancel()
         }
     }
