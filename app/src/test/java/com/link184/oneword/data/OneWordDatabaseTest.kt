@@ -25,14 +25,12 @@ class OneWordDatabaseTest {
     @Test
     fun `Given test record When insert and select it Then they must match`() {
         val database = OneWordDatabase(driver)
-        val testWord = Word(original = "test_original_word", translation = "test_translation_word")
+        val testWord = Word(666, original = "test_original_word", translation = "test_translation_word")
 
         // When
         database.wordQueries.insert(testWord.original, testWord.translation)
         val actualResult: Word =
-            database.wordQueries.selectAll { word_id, word_original, word_translated ->
-                Word(word_original, word_translated)
-            }.executeAsOne()
+            database.wordQueries.selectAll(::Word).executeAsOne()
 
         // Then
         assertEquals(testWord, actualResult)
@@ -42,9 +40,9 @@ class OneWordDatabaseTest {
     fun `Given more test records When insert and selectAll Then they must match`() {
         val database = OneWordDatabase(driver)
         val testWords = listOf(
-            Word(original = "test_original_word", translation = "test_translation_word"),
-            Word(original = "test_original_word2", translation = "test_translation_word2"),
-            Word(original = "test_original_word3", translation = "test_translation_word3")
+            Word(1, original = "test_original_word", translation = "test_translation_word"),
+            Word(2, original = "test_original_word2", translation = "test_translation_word2"),
+            Word(3, original = "test_original_word3", translation = "test_translation_word3")
         )
 
         // When
@@ -54,9 +52,7 @@ class OneWordDatabaseTest {
             }
         }
         val actualResult: List<Word> =
-            database.wordQueries.selectAll { word_id, word_original, word_translated ->
-                Word(word_original, word_translated)
-            }.executeAsList()
+            database.wordQueries.selectAll(::Word).executeAsList()
 
         // Then
         assertEquals(testWords, actualResult)
@@ -69,9 +65,7 @@ class OneWordDatabaseTest {
         // When
         database.wordQueries.deleteAll()
         val actualResult: List<Word> =
-            database.wordQueries.selectAll { word_id, word_original, word_translated ->
-                Word(word_original, word_translated)
-            }.executeAsList()
+            database.wordQueries.selectAll(::Word).executeAsList()
 
         // Then
         assertTrue(actualResult.isEmpty())

@@ -1,14 +1,27 @@
 package com.link184.oneword.data
 
+import android.content.res.Resources
 import com.link184.oneword.OneWordDatabase
+import com.link184.oneword.R
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import java.io.BufferedReader
+
+internal const val NOT_SET_WORD_ID = -1L
 
 interface WordsDataSource {
     fun setAllWords(words: List<Word>)
 
     fun getAllWords(): List<Word>
+
+    fun getFirstItem(): Word
+
+    fun bundledWords(): List<Word>
 }
 
 class DefaultWordsDataSource(
+    private val resources: Resources,
     private val database: OneWordDatabase
 ) : WordsDataSource {
     private val wordQueries = database.wordQueries
@@ -22,8 +35,20 @@ class DefaultWordsDataSource(
     }
 
     override fun getAllWords(): List<Word> {
-        return wordQueries.selectAll { _, wordOriginal, wordTranslated ->
-            Word(wordOriginal, wordTranslated)
-        }.executeAsList()
+        return wordQueries.selectAll(::Word).executeAsList()
+    }
+
+    override fun getFirstItem(): Word {
+        return wordQueries.selectFirstWord(::Word).executeAsOne()
+    }
+
+    override fun bundledWords(): List<Word> {
+        val rawDeEsDictionary =
+            resources.openRawResource(R.raw.de_en).bufferedReader().use(BufferedReader::readText)
+        val jsonObject = Json.decodeFromString<JsonObject>(rawDeEsDictionary)
+
+        return jsonObject.map {
+            Word(NOT_SET_WORD_ID, it.value.jsonPrimitive.toString(), it.key)
+        }
     }
 }

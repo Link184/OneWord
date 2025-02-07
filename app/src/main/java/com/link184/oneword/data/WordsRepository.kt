@@ -1,12 +1,5 @@
 package com.link184.oneword.data
 
-import android.content.res.Resources
-import com.link184.oneword.R
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import java.io.BufferedReader
-
 interface WordsRepository {
     fun loadWords(): List<Word>
 
@@ -14,24 +7,21 @@ interface WordsRepository {
 }
 
 class DefaultWordsRepository(
-    private val resources: Resources,
     private val wordsDataSource: WordsDataSource,
-): WordsRepository {
+    private val activeWordPreference: ActiveWordPreference,
+) : WordsRepository {
     override fun loadWords(): List<Word> {
-        maybeCacheWords()
+        if (activeWordPreference.activeWordId == NOT_SET_WORD_ID) {
+            cacheWords()
+        }
 
         return wordsDataSource.getAllWords()
     }
 
-    private fun maybeCacheWords() {
-        val rawDeEsDictionary = resources.openRawResource(R.raw.de_en).bufferedReader().use(BufferedReader::readText)
-        val jsonObject = Json.decodeFromString<JsonObject>(rawDeEsDictionary)
-
-        val allWords = jsonObject.map {
-            Word(it.value.jsonPrimitive.toString(), it.key)
-        }
-
-        wordsDataSource.setAllWords(allWords)
+    private fun cacheWords() {
+        val bundledWordsShuffled = wordsDataSource.bundledWords().shuffled()
+        wordsDataSource.setAllWords(bundledWordsShuffled)
+        activeWordPreference.activeWordId = wordsDataSource.getFirstItem().id
     }
 
     override fun nextWord(): Word {

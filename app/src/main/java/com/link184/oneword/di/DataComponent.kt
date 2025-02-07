@@ -1,9 +1,12 @@
 package com.link184.oneword.di
 
 import android.content.Context
+import android.content.res.Resources
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.link184.oneword.OneWordDatabase
+import com.link184.oneword.data.ActiveWordPreference
+import com.link184.oneword.data.DefaultActiveWordPreference
 import com.link184.oneword.data.DefaultWordsDataSource
 import com.link184.oneword.data.DefaultWordsRepository
 import com.link184.oneword.data.WordsDataSource
@@ -21,6 +24,10 @@ import javax.inject.Singleton
 class DataComponent {
     @Provides
     @Singleton
+    fun providesResources(@ApplicationContext context: Context): Resources = context.resources
+
+    @Provides
+    @Singleton
     fun providesOneWordDatabase(sqlDriver: SqlDriver): OneWordDatabase {
         return OneWordDatabase(sqlDriver)
     }
@@ -35,18 +42,26 @@ class DataComponent {
 
     @Provides
     @Singleton
-    fun providesWordsDataSource(database: OneWordDatabase): WordsDataSource {
-        return DefaultWordsDataSource(database)
+    fun providesWordsDataSource(
+        resources: Resources,
+        database: OneWordDatabase
+    ): WordsDataSource {
+        return DefaultWordsDataSource(resources, database)
     }
 
+    @Provides
+    @Singleton
+    fun providesActiveWordPreference(
+        @ApplicationContext context: Context
+    ) : ActiveWordPreference = DefaultActiveWordPreference(context)
 
     @Provides
     @Singleton
     fun providesWordsRepository(
-        @ApplicationContext context: Context,
-        wordsDataSource: WordsDataSource
+        wordsDataSource: WordsDataSource,
+        activeWordPreference: ActiveWordPreference
     ): WordsRepository {
-        return DefaultWordsRepository(context.resources, wordsDataSource)
+        return DefaultWordsRepository(wordsDataSource, activeWordPreference)
     }
 
     @Provides

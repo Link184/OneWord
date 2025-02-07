@@ -12,6 +12,10 @@ selectAll:
 SELECT *
 FROM Word;
 
+selectFirstWord:
+SELECT *
+FROM Word LIMIT 1;
+
 insertFullWordObject:
 INSERT INTO Word(word_original, word_translated)
 VALUES ?;

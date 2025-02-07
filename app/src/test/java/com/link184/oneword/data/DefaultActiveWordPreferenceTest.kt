@@ -13,8 +13,8 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class DefaultActiveWordsPreferenceTest {
-    private lateinit var classUnderTest : DefaultActiveWordsPreference
+class DefaultActiveWordPreferenceTest {
+    private lateinit var classUnderTest : DefaultActiveWordPreference
     @MockK(relaxed = true)
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -24,7 +24,7 @@ class DefaultActiveWordsPreferenceTest {
 
         val context: Context = mockk()
         every { context.getSharedPreferences(ACTIVE_WORD_SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE) } returns sharedPreferences
-        classUnderTest = DefaultActiveWordsPreference(context)
+        classUnderTest = DefaultActiveWordPreference(context)
     }
 
     @Test
