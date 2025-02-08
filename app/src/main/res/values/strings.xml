@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">OneWord</string>
+    <string name="notification_button_next_word">Next word</string>
+    <string name="notification_button_dont_show_today">Don\'t show today</string>
 </resources>

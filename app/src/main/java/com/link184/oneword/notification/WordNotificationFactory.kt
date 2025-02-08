@@ -44,7 +44,6 @@ class WordNotificationFactory(
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle("${word.original} : ${word.translation}")
             .setPriority(NotificationCompat.PRIORITY_LOW)
-//            .setContent(remoteView)
             .setCustomBigContentView(remoteViews)
             .setSilent(true)
             .setOngoing(true)
@@ -67,6 +66,8 @@ class WordNotificationFactory(
             it.setTextViewText(R.id.notification_word_original, word.original)
             it.setTextViewText(R.id.notification_word_translation, word.translation)
             it.setImageViewResource(R.id.notification_icon, R.drawable.ic_launcher_foreground)
+            it.setOnClickPendingIntent(R.id.notification_button_next, buildNotificationActionPendingIntent(WordNotificationActionReceiver.NEXT_WORD_INTENT_ACTION))
+            it.setOnClickPendingIntent(R.id.notification_button_cancel, buildNotificationActionPendingIntent(WordNotificationActionReceiver.CANCELED_INTENT_ACTION))
         }
     }
 
