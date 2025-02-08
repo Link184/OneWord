@@ -8,9 +8,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.link184.oneword.R
+import com.link184.oneword.data.Word
 import com.link184.oneword.domain.GetActiveWordUseCase
 
 private const val CHANNEL_ID = "OneWordMainNotification"
@@ -31,14 +33,19 @@ class WordNotificationFactory(
         notificationManager.cancel(NOTIFICATION_ID)
     }
 
+
     private fun buildNotification(context: Context): Notification {
         createNotificationChannel(context)
 
         val word = getActiveWordUseCase()
+        val remoteViews = buildContentRemoteViews(word)
+
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle("${word.original} : ${word.translation}")
             .setPriority(NotificationCompat.PRIORITY_LOW)
+//            .setContent(remoteView)
+            .setCustomBigContentView(remoteViews)
             .setSilent(true)
             .setOngoing(true)
             .setDeleteIntent(buildNotificationActionPendingIntent(WordNotificationActionReceiver.DISMISS_INTENT_ACTION))
@@ -53,6 +60,14 @@ class WordNotificationFactory(
                 buildNotificationActionPendingIntent(WordNotificationActionReceiver.NEXT_WORD_INTENT_ACTION)
             )
             .build()
+    }
+
+    private fun buildContentRemoteViews(word: Word): RemoteViews {
+        return RemoteViews(context.packageName, R.layout.view_notification).also {
+            it.setTextViewText(R.id.notification_word_original, word.original)
+            it.setTextViewText(R.id.notification_word_translation, word.translation)
+            it.setImageViewResource(R.id.notification_icon, R.drawable.ic_launcher_foreground)
+        }
     }
 
     private fun buildNotificationActionPendingIntent(action: String): PendingIntent {
