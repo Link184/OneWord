@@ -20,14 +20,14 @@ import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.link184.oneword.ui.SettingsScreen
-import com.link184.oneword.ui.theme.OneWordTheme
+import com.link184.oneword.ui.theme.Compose97Theme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            OneWordTheme {
+            Compose97Theme {
                 MainScreen(::checkNotificationPermission)
             }
         }
