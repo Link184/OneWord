@@ -1,24 +1,20 @@
 package com.link184.oneword.data
 
-interface WordsRepository {
-    fun loadWords(): List<Word>
+import java.util.Calendar
 
+interface WordsRepository {
     fun nextWord(): Word
 
     fun activeWord(): Word
+
+    fun needToChangeActiveWord(): Boolean
 }
 
 class DefaultWordsRepository(
     private val wordsDataSource: WordsDataSource,
     private val activeWordPreference: ActiveWordPreference,
+    private val nowCalendar: Calendar
 ) : WordsRepository {
-    override fun loadWords(): List<Word> {
-        if (activeWordPreference.activeWordId == NOT_SET_WORD_ID) {
-            cacheWords()
-        }
-
-        return wordsDataSource.getAllWords()
-    }
 
     private fun cacheWords() {
         val bundledWordsShuffled = wordsDataSource.bundledWords().shuffled()
@@ -43,5 +39,9 @@ class DefaultWordsRepository(
         } else {
             wordsDataSource.getWordById(activeWordPreference.activeWordId)
         }
+    }
+
+    override fun needToChangeActiveWord(): Boolean {
+        return nowCalendar.after(activeWordPreference.lastUpdateDateCalendar)
     }
 }

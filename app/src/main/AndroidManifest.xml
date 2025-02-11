@@ -34,11 +34,6 @@
                 <action android:name="com.link184.oneword.WORD_NOTIFICATION_NEXT" />
             </intent-filter>
         </receiver>
-
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove"/>
     </application>
 
 </manifest>

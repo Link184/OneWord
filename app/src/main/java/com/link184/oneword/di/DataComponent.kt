@@ -18,6 +18,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import java.util.Calendar
 import javax.inject.Singleton
 
 @Module
@@ -51,18 +52,23 @@ class DataComponent {
     }
 
     @Provides
+    fun providesNowCalendar(): Calendar = Calendar.getInstance()
+
+    @Provides
     @Singleton
     fun providesActiveWordPreference(
-        @ApplicationContext context: Context
-    ) : ActiveWordPreference = DefaultActiveWordPreference(context)
+        @ApplicationContext context: Context,
+        nowCalendar: Calendar
+    ) : ActiveWordPreference = DefaultActiveWordPreference(context, nowCalendar)
 
     @Provides
     @Singleton
     fun providesWordsRepository(
         wordsDataSource: WordsDataSource,
-        activeWordPreference: ActiveWordPreference
+        activeWordPreference: ActiveWordPreference,
+        nowCalendar: Calendar
     ): WordsRepository {
-        return DefaultWordsRepository(wordsDataSource, activeWordPreference)
+        return DefaultWordsRepository(wordsDataSource, activeWordPreference, nowCalendar)
     }
 
     @Provides

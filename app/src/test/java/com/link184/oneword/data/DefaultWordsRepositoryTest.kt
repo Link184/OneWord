@@ -4,10 +4,13 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import java.util.Calendar
 
 @RunWith(JUnit4::class)
 class DefaultWordsRepositoryTest {
@@ -19,30 +22,17 @@ class DefaultWordsRepositoryTest {
     @MockK(relaxed = true)
     private lateinit var activeWordPreference: ActiveWordPreference
 
+    private val nowCalendar: Calendar = Calendar.getInstance()
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
         classUnderTest =
             DefaultWordsRepository(
                 wordsDataSource,
-                activeWordPreference
+                activeWordPreference,
+                nowCalendar
             )
-    }
-
-    @Test
-    fun `Given invalid active When loadWords Then cache words and set the first active word`() {
-        // Given
-        every { activeWordPreference.activeWordId } returns NOT_SET_WORD_ID
-        val bundledWords = listOf(Word(22, "originalWord", "translatedWord"))
-        every { wordsDataSource.bundledWords() } returns bundledWords
-
-        // When
-        classUnderTest.loadWords()
-
-        // Then
-        verify(exactly = 1) { wordsDataSource.setAllWords(bundledWords) }
-        verify(exactly = 1) { activeWordPreference.activeWordId = any() }
-        verify(exactly = 1) { wordsDataSource.getAllWords() }
     }
 
     @Test
@@ -105,5 +95,29 @@ class DefaultWordsRepositoryTest {
         verify(exactly = 1) { wordsDataSource.setAllWords(bundledWords) }
         verify(exactly = 2) { wordsDataSource.getFirstWord() }
         verify(exactly = 1) { activeWordPreference.activeWordId = any() }
+    }
+
+    @Test
+    fun `Given last update of active word before today When needToChangeActiveWord Then return true`() {
+        // Given
+        every { activeWordPreference.lastUpdateDateCalendar } returns Calendar.getInstance().also { it.add(Calendar.DAY_OF_YEAR, -1) }
+
+        // When
+        val actualResult = classUnderTest.needToChangeActiveWord()
+
+        // Then
+        assertTrue(actualResult)
+    }
+
+    @Test
+    fun `Given last update of active word today When needToChangeActiveWord Then return false`() {
+        // Given
+        every { activeWordPreference.lastUpdateDateCalendar } returns Calendar.getInstance()
+
+        // When
+        val actualResult = classUnderTest.needToChangeActiveWord()
+
+        // Then
+        assertFalse(actualResult)
     }
 }
