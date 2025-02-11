@@ -1,4 +1,4 @@
-package com.link184.oneword.ui
+package com.link184.oneword.ui.component
 
 import androidx.compose.foundation.IndicationNodeFactory
 import androidx.compose.foundation.background
