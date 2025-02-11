@@ -11,6 +11,10 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -40,5 +44,20 @@ class WordNotificationWorker @AssistedInject constructor(
                 workerRequest
             )
         }
+
+        fun stop(context: Context) {
+            val workManager = WorkManager.getInstance(context)
+            workManager.cancelUniqueWork(WORK_NAME)
+
+            EntryPointAccessors.fromApplication<WordNotificationFactoryEntryPoint>(context)
+                .injectWordNotificationFactory()
+                .cancel()
+        }
     }
+}
+
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface WordNotificationFactoryEntryPoint {
+    fun injectWordNotificationFactory(): WordNotificationFactory
 }

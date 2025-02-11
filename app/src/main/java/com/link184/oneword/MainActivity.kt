@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -21,45 +23,12 @@ import com.link184.oneword.ui.SettingsScreen
 import com.link184.oneword.ui.theme.OneWordTheme
 
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             OneWordTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val cameraPermissionState =
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            rememberPermissionState(
-                                Manifest.permission.POST_NOTIFICATIONS
-                            )
-                        } else {
-                            object : PermissionState {
-                                override val permission: String = Manifest.permission.POST_NOTIFICATIONS
-                                override val status: PermissionStatus = PermissionStatus.Granted
-
-                                override fun launchPermissionRequest() {
-                                    TODO("Not yet implemented")
-                                }
-                            }
-                        }
-
-                    when (cameraPermissionState.status) {
-                        PermissionStatus.Granted -> {
-                            SettingsScreen(
-                                modifier = Modifier.padding(innerPadding)
-                            )
-                        }
-
-                        is PermissionStatus.Denied -> {
-                            checkNotificationPermission()
-                            Text(
-                                modifier = Modifier.padding(innerPadding),
-                                text = "I can't work without notifications permission"
-                            )
-                        }
-                    }
-                }
+                MainScreen(::checkNotificationPermission)
             }
         }
     }
@@ -78,4 +47,48 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+@Composable
+@OptIn(ExperimentalPermissionsApi::class)
+fun MainScreen(
+    onCheckNotificationPermission: () -> Unit
+) {
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        val cameraPermissionState =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                rememberPermissionState(
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+            } else {
+                object : PermissionState {
+                    override val permission: String = Manifest.permission.POST_NOTIFICATIONS
+                    override val status: PermissionStatus = PermissionStatus.Granted
+
+                    override fun launchPermissionRequest() = Unit
+                }
+            }
+
+        when (cameraPermissionState.status) {
+            PermissionStatus.Granted -> {
+                SettingsScreen(
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+
+            is PermissionStatus.Denied -> {
+                onCheckNotificationPermission()
+                Text(
+                    modifier = Modifier.padding(innerPadding),
+                    text = "I can't work without notifications permission"
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MainScreenPreview() {
+    MainScreen {}
 }
