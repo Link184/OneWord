@@ -15,7 +15,7 @@ import java.util.Calendar
 
 @RunWith(JUnit4::class)
 class DefaultActiveWordPreferenceTest {
-    private lateinit var classUnderTest : DefaultActiveWordPreference
+    private lateinit var classUnderTest: DefaultActiveWordPreference
 
     @MockK(relaxed = true)
     private lateinit var sharedPreferences: SharedPreferences
@@ -28,8 +28,13 @@ class DefaultActiveWordPreferenceTest {
         MockKAnnotations.init(this)
 
         val context: Context = mockk()
-        every { context.getSharedPreferences(ACTIVE_WORD_SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE) } returns sharedPreferences
-        classUnderTest = DefaultActiveWordPreference(context, nowCalendar)
+        every {
+            context.getSharedPreferences(
+                ACTIVE_WORD_SHARED_PREFERENCE_NAME,
+                Context.MODE_PRIVATE
+            )
+        } returns sharedPreferences
+        classUnderTest = DefaultActiveWordPreference(context, { nowCalendar })
     }
 
     @Test

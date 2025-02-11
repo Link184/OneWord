@@ -5,6 +5,10 @@ import com.link184.oneword.data.WordsRepository
 
 class GetActiveWordUseCase(private val wordsRepository: WordsRepository) {
     operator fun invoke(): Word {
-        return wordsRepository.activeWord()
+        return if (wordsRepository.needToChangeActiveWord()) {
+            wordsRepository.nextWord()
+        } else {
+            wordsRepository.activeWord()
+        }
     }
 }

@@ -31,7 +31,7 @@ class DefaultWordsRepositoryTest {
             DefaultWordsRepository(
                 wordsDataSource,
                 activeWordPreference,
-                nowCalendar
+                { nowCalendar }
             )
     }
 
@@ -46,6 +46,7 @@ class DefaultWordsRepositoryTest {
 
         // Then
         verify(exactly = 1) { activeWordPreference.activeWordId = activeWordId + 1 }
+        verify(exactly = 1) { activeWordPreference.lastUpdateDateCalendar = any() }
         verify(exactly = 1) { wordsDataSource.getWordById(activeWordId) }
     }
 
@@ -63,6 +64,7 @@ class DefaultWordsRepositoryTest {
         verify(exactly = 1) { wordsDataSource.setAllWords(bundledWords) }
         verify(exactly = 2) { wordsDataSource.getFirstWord() }
         verify(exactly = 1) { activeWordPreference.activeWordId = any() }
+        verify(exactly = 1) { activeWordPreference.lastUpdateDateCalendar = any() }
     }
 
 
@@ -95,6 +97,7 @@ class DefaultWordsRepositoryTest {
         verify(exactly = 1) { wordsDataSource.setAllWords(bundledWords) }
         verify(exactly = 2) { wordsDataSource.getFirstWord() }
         verify(exactly = 1) { activeWordPreference.activeWordId = any() }
+        verify(exactly = 1) { activeWordPreference.lastUpdateDateCalendar = any() }
     }
 
     @Test

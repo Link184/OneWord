@@ -13,6 +13,7 @@ import com.link184.oneword.data.WordsDataSource
 import com.link184.oneword.data.WordsRepository
 import com.link184.oneword.domain.GetActiveWordUseCase
 import com.link184.oneword.notification.WordNotificationFactory
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -58,7 +59,7 @@ class DataComponent {
     @Singleton
     fun providesActiveWordPreference(
         @ApplicationContext context: Context,
-        nowCalendar: Calendar
+        nowCalendar: Lazy<Calendar>
     ) : ActiveWordPreference = DefaultActiveWordPreference(context, nowCalendar)
 
     @Provides
@@ -66,7 +67,7 @@ class DataComponent {
     fun providesWordsRepository(
         wordsDataSource: WordsDataSource,
         activeWordPreference: ActiveWordPreference,
-        nowCalendar: Calendar
+        nowCalendar: Lazy<Calendar>
     ): WordsRepository {
         return DefaultWordsRepository(wordsDataSource, activeWordPreference, nowCalendar)
     }

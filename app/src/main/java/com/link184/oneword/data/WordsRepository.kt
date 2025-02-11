@@ -1,5 +1,6 @@
 package com.link184.oneword.data
 
+import dagger.Lazy
 import java.util.Calendar
 
 interface WordsRepository {
@@ -13,7 +14,7 @@ interface WordsRepository {
 class DefaultWordsRepository(
     private val wordsDataSource: WordsDataSource,
     private val activeWordPreference: ActiveWordPreference,
-    private val nowCalendar: Calendar
+    private val nowCalendar: Lazy<Calendar>
 ) : WordsRepository {
 
     private fun cacheWords() {
@@ -23,6 +24,7 @@ class DefaultWordsRepository(
     }
 
     override fun nextWord(): Word {
+        activeWordPreference.lastUpdateDateCalendar = nowCalendar.get()
         return if (activeWordPreference.activeWordId == NOT_SET_WORD_ID) {
             cacheWords()
             wordsDataSource.getFirstWord()
@@ -34,6 +36,7 @@ class DefaultWordsRepository(
 
     override fun activeWord(): Word {
         return if (activeWordPreference.activeWordId == NOT_SET_WORD_ID) {
+            activeWordPreference.lastUpdateDateCalendar = nowCalendar.get()
             cacheWords()
             wordsDataSource.getFirstWord()
         } else {
@@ -42,6 +45,6 @@ class DefaultWordsRepository(
     }
 
     override fun needToChangeActiveWord(): Boolean {
-        return nowCalendar.after(activeWordPreference.lastUpdateDateCalendar)
+        return nowCalendar.get().after(activeWordPreference.lastUpdateDateCalendar)
     }
 }
