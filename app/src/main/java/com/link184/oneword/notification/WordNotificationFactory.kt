@@ -77,8 +77,20 @@ class WordNotificationFactory(
                 R.id.notification_button_settings,
                 PendingIntent.getActivity(
                     context,
-                    666,
+                    0,
                     Intent(context, MainActivity::class.java),
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+            )
+            it.setOnClickPendingIntent(
+                R.id.notification_button_text_to_speech,
+                PendingIntent.getService(
+                    context,
+                    0,
+                    Intent(
+                        context,
+                        TextToSpeechService::class.java
+                    ).putExtra(TextToSpeechService.ACTIVE_WORD_KEY, word.original),
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
             )
