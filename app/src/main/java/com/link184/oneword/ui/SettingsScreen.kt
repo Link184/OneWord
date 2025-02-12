@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.link184.oneword.notification.WordNotificationWorker
 import com.link184.oneword.ui.component.Button95
 import com.link184.oneword.ui.component.Divider95
@@ -30,9 +31,14 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         }
     ) {
         Column {
+            val settingsViewModel: SettingsViewModel = viewModel()
+
             Button95(
                 modifier = Modifier.padding(bottom = 8.dp),
-                onClick = { WordNotificationWorker.enqueue(context) }
+                onClick = {
+                    settingsViewModel.onLaunchNotifications()
+                    WordNotificationWorker.enqueue(context)
+                }
             ) {
                 Text(
                     modifier = Modifier.padding(8.dp),
@@ -42,7 +48,10 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             Divider95()
             Button95(
                 modifier = Modifier.padding(top = 8.dp),
-                onClick = { WordNotificationWorker.stop(context) }
+                onClick = {
+                    settingsViewModel.onDisableNotifications()
+                    WordNotificationWorker.stop(context)
+                }
             ) {
                 Text(
                     modifier = Modifier.padding(8.dp),

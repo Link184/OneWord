@@ -12,6 +12,8 @@ import com.link184.oneword.data.DefaultWordsRepository
 import com.link184.oneword.data.WordsDataSource
 import com.link184.oneword.data.WordsRepository
 import com.link184.oneword.domain.GetActiveWordUseCase
+import com.link184.oneword.domain.GetNotificationEnabledUseCase
+import com.link184.oneword.domain.SetNotificationEnabledUseCase
 import com.link184.oneword.notification.WordNotificationFactory
 import dagger.Lazy
 import dagger.Module
@@ -79,5 +81,21 @@ class DataComponent {
         getActiveWordUseCase: GetActiveWordUseCase
     ): WordNotificationFactory {
         return WordNotificationFactory(context, getActiveWordUseCase)
+    }
+
+    @Provides
+    @Singleton
+    fun providesGetNotificationEnabledUseCase(
+        wordsRepository: WordsRepository
+    ): GetNotificationEnabledUseCase {
+        return GetNotificationEnabledUseCase(wordsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesSetNotificationEnabledUseCase(
+        wordsRepository: WordsRepository
+    ): SetNotificationEnabledUseCase {
+        return SetNotificationEnabledUseCase(wordsRepository)
     }
 }
