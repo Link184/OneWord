@@ -101,6 +101,18 @@ class DefaultWordsRepositoryTest {
     }
 
     @Test
+    fun `Given last update of active word today but a few seconds ago When needToChangeActiveWord Then return false`() {
+        // Given
+        every { activeWordPreference.lastUpdateDateCalendar } returns Calendar.getInstance().also { it.add(Calendar.HOUR_OF_DAY, -1) }
+
+        // When
+        val actualResult = classUnderTest.needToChangeActiveWord()
+
+        // Then
+        assertFalse(actualResult)
+    }
+
+    @Test
     fun `Given last update of active word before today When needToChangeActiveWord Then return true`() {
         // Given
         every { activeWordPreference.lastUpdateDateCalendar } returns Calendar.getInstance().also { it.add(Calendar.DAY_OF_YEAR, -1) }

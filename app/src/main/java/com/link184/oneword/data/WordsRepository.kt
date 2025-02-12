@@ -49,7 +49,9 @@ class DefaultWordsRepository(
     }
 
     override fun needToChangeActiveWord(): Boolean {
-        return nowCalendar.get().after(activeWordPreference.lastUpdateDateCalendar)
+        val nowDayOfYear = nowCalendar.get().get(Calendar.DAY_OF_YEAR)
+        val lastUpdateDayOfYear = activeWordPreference.lastUpdateDateCalendar.get(Calendar.DAY_OF_YEAR)
+        return nowDayOfYear > lastUpdateDayOfYear
     }
 
     override fun isNotificationsEnabled(): Boolean = activeWordPreference.enabled
