@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
@@ -41,7 +42,8 @@ class WordNotificationFactory(
         val remoteViews = buildContentRemoteViews(word)
 
         return NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.ic_notification_logo_small)
+            .setLargeIcon(Icon.createWithResource(context, R.drawable.ic_notification_logo_large))
             .setContentTitle("${word.original} : ${word.translation}")
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setCustomBigContentView(remoteViews)
