@@ -96,7 +96,7 @@ fun Window95(
     offsetX: MutableState<Float>,
     offsetY: MutableState<Float>,
     action: (Window95Action) -> Unit,
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     Window95(
         modifier = modifier,

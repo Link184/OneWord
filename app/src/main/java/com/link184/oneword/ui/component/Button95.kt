@@ -1,12 +1,16 @@
 package com.link184.oneword.ui.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.IndicationNodeFactory
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -15,10 +19,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.DrawModifierNode
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.link184.oneword.ui.theme.Color95
 import kotlinx.coroutines.flow.collectLatest
@@ -114,20 +120,30 @@ object ButtonIndication95 : IndicationNodeFactory {
 @Composable
 fun CloseButton95(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button95(modifier = modifier, onClick = onClick) {
-        Text("X")
+        Text(modifier = Modifier.size(16.dp), textAlign = TextAlign.Center, text = "X")
     }
 }
 
 @Composable
 fun MaximizeButton95(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button95(modifier = modifier, onClick = onClick) {
-        Text("Max")
+        Box(
+            modifier = Modifier
+                .size(16.dp)
+                .padding(4.dp)
+                .border(BorderStroke(1.dp, Color.Black))
+        )
     }
 }
 
 @Composable
 fun MinimizeButton95(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button95(modifier = modifier, onClick = onClick) {
-        Text(" _ ")
+        Text(
+            modifier = Modifier
+                .size(16.dp),
+            textAlign = TextAlign.Center,
+            text = " _ "
+        )
     }
 }

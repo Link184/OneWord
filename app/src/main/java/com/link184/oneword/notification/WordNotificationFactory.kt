@@ -11,6 +11,7 @@ import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.link184.oneword.MainActivity
 import com.link184.oneword.R
 import com.link184.oneword.data.Word
 import com.link184.oneword.domain.GetActiveWordUseCase
@@ -64,8 +65,23 @@ class WordNotificationFactory(
         return RemoteViews(context.packageName, R.layout.view_notification).also {
             it.setTextViewText(R.id.notification_word_original, word.original)
             it.setTextViewText(R.id.notification_word_translation, word.translation)
-            it.setOnClickPendingIntent(R.id.notification_button_next, buildNotificationActionPendingIntent(WordNotificationActionReceiver.NEXT_WORD_INTENT_ACTION))
-            it.setOnClickPendingIntent(R.id.notification_button_cancel, buildNotificationActionPendingIntent(WordNotificationActionReceiver.CANCELED_INTENT_ACTION))
+            it.setOnClickPendingIntent(
+                R.id.notification_button_next,
+                buildNotificationActionPendingIntent(WordNotificationActionReceiver.NEXT_WORD_INTENT_ACTION)
+            )
+            it.setOnClickPendingIntent(
+                R.id.notification_button_cancel,
+                buildNotificationActionPendingIntent(WordNotificationActionReceiver.CANCELED_INTENT_ACTION)
+            )
+            it.setOnClickPendingIntent(
+                R.id.notification_button_settings,
+                PendingIntent.getActivity(
+                    context,
+                    666,
+                    Intent(context, MainActivity::class.java),
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+            )
         }
     }
 
