@@ -9,6 +9,10 @@ interface WordsRepository {
     fun activeWord(): Word
 
     fun needToChangeActiveWord(): Boolean
+
+    fun isNotificationsEnabled(): Boolean
+
+    fun setNotificationEnabled(enabled: Boolean)
 }
 
 class DefaultWordsRepository(
@@ -46,5 +50,11 @@ class DefaultWordsRepository(
 
     override fun needToChangeActiveWord(): Boolean {
         return nowCalendar.get().after(activeWordPreference.lastUpdateDateCalendar)
+    }
+
+    override fun isNotificationsEnabled(): Boolean = activeWordPreference.enabled
+
+    override fun setNotificationEnabled(enabled: Boolean) {
+        activeWordPreference.enabled = enabled
     }
 }

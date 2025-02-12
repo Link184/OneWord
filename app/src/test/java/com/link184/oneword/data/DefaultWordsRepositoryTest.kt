@@ -123,4 +123,37 @@ class DefaultWordsRepositoryTest {
         // Then
         assertFalse(actualResult)
     }
+
+    @Test
+    fun `Given enabled ActiveWordPreference When isNotificationsEnabled Then return true`() {
+        // Given
+        every { activeWordPreference.enabled } returns true
+
+        // When
+        val actualResult = classUnderTest.isNotificationsEnabled()
+
+        // Then
+        assertTrue(actualResult)
+    }
+
+    @Test
+    fun `Given disabled ActiveWordPreference When isNotificationsEnabled Then return false`() {
+        // Given
+        every { activeWordPreference.enabled } returns false
+
+        // When
+        val actualResult = classUnderTest.isNotificationsEnabled()
+
+        // Then
+        assertFalse(actualResult)
+    }
+
+    @Test
+    fun `When setNotificationEnabled Then call enabled on ActiveWordPreference`() {
+        // When
+        classUnderTest.setNotificationEnabled(true)
+
+        // Then
+        verify(exactly = 1) { activeWordPreference.enabled = true }
+    }
 }
