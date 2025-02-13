@@ -9,7 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,7 +55,7 @@ fun MainScreen(
     onCheckNotificationPermission: () -> Unit
 ) {
     Scaffold(modifier = Modifier.height(400.dp)) { innerPadding ->
-        val cameraPermissionState =
+        val notificationPermissionState =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 rememberPermissionState(
                     Manifest.permission.POST_NOTIFICATIONS
@@ -70,21 +69,11 @@ fun MainScreen(
                 }
             }
 
-        when (cameraPermissionState.status) {
-            PermissionStatus.Granted -> {
-                SettingsScreen(
-                    modifier = Modifier.padding(innerPadding)
-                )
-            }
-
-            is PermissionStatus.Denied -> {
-                onCheckNotificationPermission()
-                Text(
-                    modifier = Modifier.padding(innerPadding),
-                    text = "I can't work without notifications permission"
-                )
-            }
-        }
+        SettingsScreen(
+            modifier = Modifier.padding(innerPadding),
+            notificationPermissionStatus = notificationPermissionState.status,
+            onCheckNotificationPermission = onCheckNotificationPermission
+        )
     }
 }
 

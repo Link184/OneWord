@@ -54,7 +54,7 @@ class DefaultWordsDataSource(
         val jsonObject = Json.decodeFromString<JsonObject>(rawDeEsDictionary)
 
         return jsonObject.map {
-            Word(NOT_SET_WORD_ID, it.value.jsonPrimitive.toString(), it.key)
+            Word(NOT_SET_WORD_ID, it.value.jsonPrimitive.content, it.key)
         }
     }
 }
