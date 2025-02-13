@@ -16,20 +16,23 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
 class WordNotificationWorker @AssistedInject constructor(
-    @Assisted context: Context,
+    @Assisted private val context: Context,
     @Assisted workerParameters: WorkerParameters,
     private val wordNotificationFactory: WordNotificationFactory,
-    private val getNotificationEnabledUseCase: GetNotificationEnabledUseCase
+    private val getNotificationEnabledUseCase: GetNotificationEnabledUseCase,
+    private val nowCalendar: Calendar
 ) : Worker(context, workerParameters) {
     @SuppressLint("MissingPermission")
     override fun doWork(): Result {
         val notificationsEnabled = getNotificationEnabledUseCase()
         return if (notificationsEnabled) {
             wordNotificationFactory.show()
+            enqueueDelayed(context, nowCalendar)
             Result.success()
         } else {
             Result.failure()
@@ -38,16 +41,35 @@ class WordNotificationWorker @AssistedInject constructor(
 
     companion object {
         private const val WORK_NAME = "WordNotificationWorker"
-        private val workerRequest: PeriodicWorkRequest =
+        private val workerRequest: PeriodicWorkRequest.Builder =
             PeriodicWorkRequestBuilder<WordNotificationWorker>(1, TimeUnit.DAYS)
-                .build()
+
+        private fun enqueueDelayed(context: Context, nowCalendar: Calendar) {
+            val workManager = WorkManager.getInstance(context)
+
+            val startTimeTimestamp = nowCalendar.let {
+                it.add(Calendar.DAY_OF_YEAR, 1)
+                it.set(Calendar.HOUR, 0)
+                it.set(Calendar.MINUTE, 0)
+                it.set(Calendar.SECOND, 1)
+                it.timeInMillis
+            }
+
+            workManager.enqueueUniquePeriodicWork(
+                WORK_NAME,
+                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+                workerRequest
+                    .setInitialDelay(startTimeTimestamp, TimeUnit.MILLISECONDS)
+                    .build()
+            )
+        }
 
         fun enqueue(context: Context) {
             val workManager = WorkManager.getInstance(context)
             workManager.enqueueUniquePeriodicWork(
                 WORK_NAME,
                 ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-                workerRequest
+                workerRequest.build()
             )
         }
 

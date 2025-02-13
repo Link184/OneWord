@@ -85,7 +85,7 @@ class WordNotificationFactory(
                 )
             )
             it.setOnClickPendingIntent(
-                R.id.notification_button_text_to_speech,
+                R.id.notification_word_original_layout,
                 PendingIntent.getService(
                     context,
                     0,
