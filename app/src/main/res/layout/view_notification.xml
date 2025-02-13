@@ -34,8 +34,8 @@
                 android:id="@+id/notification_word_original"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLines="4"
-                android:textSize="18sp"
+                android:maxLines="8"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:gravity="center_vertical|start"
                 android:layout_gravity="center_vertical|start"
@@ -49,11 +49,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:textColor="@color/textPrimary"
-            android:maxLines="4"
-            android:textSize="18sp"
+            android:maxLines="8"
+            android:textSize="12sp"
+            android:maxWidth="100dp"
             android:gravity="center_vertical|start"
             android:layout_gravity="center_vertical|start"
-            tools:text="asd" />
+            tools:text="@tools:sample/lorem/random" />
     </LinearLayout>
 
     <LinearLayout

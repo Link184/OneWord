@@ -1,20 +1,26 @@
 package com.link184.oneword.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.link184.oneword.R
 import com.link184.oneword.notification.WordNotificationWorker
 import com.link184.oneword.ui.component.Button95
 import com.link184.oneword.ui.component.Divider95
@@ -45,6 +51,13 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val settingsViewModel: SettingsViewModel = viewModel()
+
+            Image(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_launcher_foreground),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary),
+                contentDescription = null
+            )
+
             Button95(
                 modifier = Modifier.padding(bottom = 8.dp),
                 onClick = {
