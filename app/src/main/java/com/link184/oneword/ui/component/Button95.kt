@@ -1,5 +1,8 @@
 package com.link184.oneword.ui.component
 
+import android.app.Activity.WINDOW_SERVICE
+import android.view.WindowManager
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.IndicationNodeFactory
 import androidx.compose.foundation.background
@@ -126,13 +129,51 @@ fun CloseButton95(modifier: Modifier = Modifier, onClick: () -> Unit) {
 
 @Composable
 fun MaximizeButton95(modifier: Modifier = Modifier, onClick: () -> Unit) {
-    Button95(modifier = modifier, onClick = onClick) {
-        Box(
-            modifier = Modifier
-                .size(16.dp)
-                .padding(4.dp)
-                .border(BorderStroke(1.dp, Color.Black))
-        )
+    val activity = LocalActivity.current
+    val expanded = remember { mutableStateOf(false) }
+    val windowManager = activity?.getSystemService(WINDOW_SERVICE) as? WindowManager
+
+    val initialActivityHeight = remember { activity?.window?.attributes?.height }
+    val initialActivityWidth = remember { activity?.window?.attributes?.width }
+
+    activity?.window?.attributes?.apply {
+        if (expanded.value) {
+            height = WindowManager.LayoutParams.MATCH_PARENT
+            width = WindowManager.LayoutParams.MATCH_PARENT
+        } else {
+            height = initialActivityHeight ?: 0
+            width = initialActivityWidth ?: 0
+        }
+
+        windowManager?.updateViewLayout(activity.window.decorView, this)
+    }
+
+    Button95(modifier = modifier, onClick = {
+        expanded.value = !expanded.value
+        onClick()
+    }) {
+        if (expanded.value) {
+            Box(
+                modifier = Modifier
+                    .size(16.dp)
+                    .padding(top = 3.dp, end = 2.dp, start = 4.dp, bottom = 6.dp)
+                    .border(BorderStroke(1.dp, Color.Black))
+            )
+            Box(
+                modifier = Modifier
+                    .size(16.dp)
+                    .padding(top = 6.dp, end = 4.dp, start = 2.dp, bottom = 3.dp)
+                    .background(Color95.backgroundGrey)
+                    .border(BorderStroke(1.dp, Color.Black))
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(16.dp)
+                    .padding(3.dp)
+                    .border(BorderStroke(1.dp, Color.Black))
+            )
+        }
     }
 }
 
