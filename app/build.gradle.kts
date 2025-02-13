@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.work.android)
     implementation(libs.sqldelight.driver.android)
+    implementation(libs.lifecycleDelegates)
     kapt(libs.hilt.compiler)
     kapt(libs.hilt.work.compiler)
     testImplementation(libs.junit)

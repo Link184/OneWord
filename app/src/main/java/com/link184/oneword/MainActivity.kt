@@ -2,6 +2,7 @@ package com.link184.oneword
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,12 +19,25 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
+import com.link184.delegates.creatableDestroyable
 import com.link184.oneword.ui.SettingsScreen
 import com.link184.oneword.ui.theme.Compose97Theme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val mediaPlayer by creatableDestroyable(
+        value = MediaPlayer(),
+        onCreate = {
+            it.setDataSource(resources.openRawResourceFd(R.raw.windows_98_intro))
+            it.prepare()
+            it.start()
+        },
+        onDestroy = {
+            it.release()
+        }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -54,7 +68,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     onCheckNotificationPermission: () -> Unit
 ) {
-    Scaffold(modifier = Modifier.height(400.dp)) { innerPadding ->
+    Scaffold(modifier = Modifier.height(270.dp)) { innerPadding ->
         val notificationPermissionState =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 rememberPermissionState(
