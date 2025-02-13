@@ -1,5 +1,8 @@
 package com.link184.oneword.ui.component
 
+import android.app.Activity.WINDOW_SERVICE
+import android.view.WindowManager
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
@@ -12,16 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,11 +31,12 @@ import com.link184.oneword.ui.theme.Color95
 @Composable
 fun Window95(
     modifier: Modifier = Modifier,
-    offsetX: MutableState<Float>,
-    offsetY: MutableState<Float>,
     headerContent: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit
 ) {
+    val activity = LocalActivity.current
+    val windowManager = activity?.getSystemService(WINDOW_SERVICE) as WindowManager
+
     // TODO the border have 2 sets of colors (top + left & bottom + right)
     Column(
         modifier = modifier
@@ -45,12 +45,16 @@ fun Window95(
     ) {
         val borderCompensationPadding = 4.dp
         WindowsHeader(
-            modifier = Modifier.padding(4.dp)
+            modifier = Modifier
+                .padding(4.dp)
                 .pointerInput(Unit) {
                     detectDragGestures { change, dragAmount ->
-                        change.consumeAllChanges()
-                        offsetX.value += dragAmount.x
-                        offsetY.value += dragAmount.y
+                        change.consume()
+                        with (activity.window.attributes) {
+                            x += dragAmount.x.toInt()
+                            y += dragAmount.y.toInt()
+                            windowManager.updateViewLayout(activity.window.decorView, this)
+                        }
                     }
                 },
         ) {
@@ -93,15 +97,11 @@ fun WindowsHeader(
 fun Window95(
     modifier: Modifier = Modifier,
     headerTitle: String,
-    offsetX: MutableState<Float>,
-    offsetY: MutableState<Float>,
     action: (Window95Action) -> Unit,
     content: @Composable () -> Unit
 ) {
     Window95(
         modifier = modifier,
-        offsetX = offsetX,
-        offsetY = offsetY,
         headerContent = {
             Text(
                 modifier = Modifier
@@ -142,8 +142,6 @@ enum class Window95Action {
 fun Window95Preview() {
     Window95(
         headerTitle = "header title",
-        offsetX = remember { mutableFloatStateOf(3f) },
-        offsetY = remember { mutableFloatStateOf(3f) },
         action = {
 
         }
