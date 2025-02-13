@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -66,10 +68,11 @@ class WordNotificationWorker @AssistedInject constructor(
 
         fun enqueue(context: Context) {
             val workManager = WorkManager.getInstance(context)
-            workManager.enqueueUniquePeriodicWork(
+
+            workManager.enqueueUniqueWork(
                 WORK_NAME,
-                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-                workerRequest.build()
+                ExistingWorkPolicy.REPLACE,
+                OneTimeWorkRequestBuilder<WordNotificationWorker>().build()
             )
         }
 
