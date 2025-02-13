@@ -1,10 +1,10 @@
 package com.link184.oneword.ui
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,11 +26,12 @@ import com.link184.oneword.ui.component.Button95
 import com.link184.oneword.ui.component.Divider95
 import com.link184.oneword.ui.component.Window95
 import com.link184.oneword.ui.component.Window95Action
-import kotlin.system.exitProcess
 
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val activity = LocalActivity.current
+
     Window95(
         modifier = modifier
             .fillMaxHeight(),
@@ -39,14 +40,13 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         offsetY = remember { mutableFloatStateOf(30f) },
         action = {
             when (it) {
-                Window95Action.MinimizeClicked -> Unit
+                Window95Action.MinimizeClicked -> activity?.moveTaskToBack(true)
                 Window95Action.MaximizeClicked -> Unit
-                Window95Action.CloseClicked -> exitProcess(0)
+                Window95Action.CloseClicked -> activity?.finishAndRemoveTask()
             }
         }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -58,8 +58,10 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                 contentDescription = null
             )
 
+            Divider95()
+
             Button95(
-                modifier = Modifier.padding(bottom = 8.dp),
+                modifier = Modifier.padding(vertical = 8.dp),
                 onClick = {
                     settingsViewModel.onLaunchNotifications()
                     WordNotificationWorker.enqueue(context)
@@ -70,7 +72,6 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                     text = "Launch notifications"
                 )
             }
-            Divider95()
             Button95(
                 modifier = Modifier.padding(top = 8.dp),
                 onClick = {
